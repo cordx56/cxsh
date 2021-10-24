@@ -26,7 +26,7 @@ pub fn command_all_consuming(s: &str) -> IResult<&str, Command, VerboseError<&st
 pub fn command(s: &str) -> IResult<&str, Command, VerboseError<&str>> {
     map(
         tuple((
-            many1(map(tuple((multispace0, atom)), |(_, atom)| atom)),
+            many0(map(tuple((multispace0, atom)), |(_, atom)| atom)),
             multispace0,
             opt(tuple((alt((tag("|"), tag(">"))), command))),
         )),

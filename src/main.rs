@@ -3,20 +3,29 @@ mod prompt;
 mod execute;
 mod builtin;
 use std::io;
-use std::io::prelude::{Write};
-use execute::Executor;
+use execute::{Executor,ExecutionResult};
 
 fn main() {
-    let mut exit = false;
     let executor = Executor::new();
-    while !exit {
-        prompt::show_prompt();
+    loop {
+        if let Err(e) = prompt::show_prompt() {
+            println!("Prompt error: {}", e);
+        }
         let mut input = String::new();
-        io::stdout().flush().ok();
         io::stdin().read_line(&mut input).ok();
         match parser::command(&input) {
             Ok(parse_result) => {
-                executor.execute(&parse_result.1).ok();
+                match executor.execute(&parse_result.1) {
+                    Ok(result) => {
+                        match result {
+                            ExecutionResult::Normal => {},
+                            ExecutionResult::Exit => {
+                                break;
+                            },
+                        }
+                    },
+                    Err(e) => println!("Execution error: {}", e),
+                }
             },
             Err(e) => println!("{}", e),
         }
