@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 nix = "0.23.0"
 nom = "7.0.0"
+regex = "1.5.4"
