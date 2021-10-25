@@ -1,2 +1,7 @@
 # cxsh
-cxsh is simple shell implemented in Rust.
+cxsh is simple shell written in Rust.
+
+## Run
+```bash
+$ cargo run
+```
