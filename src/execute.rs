@@ -7,7 +7,7 @@ use std::ffi::{CStr, CString};
 use std::process::exit;
 
 pub enum ExecutionResult {
-    Normal,
+    Normal(Option<i32>),
     Exit,
 }
 
@@ -44,7 +44,7 @@ impl Executor {
                 self.execute_new_process(command)
             }
         } else {
-            Ok(ExecutionResult::Normal)
+            Ok(ExecutionResult::Normal(None))
         }
     }
 
@@ -53,10 +53,10 @@ impl Executor {
             Ok(ForkResult::Parent { child }) => {
                 match waitpid(child, Some(WaitPidFlag::WUNTRACED)) {
                     Ok(status) => match status {
-                        WaitStatus::Exited(_, _) => Ok(ExecutionResult::Normal),
-                        WaitStatus::Stopped(_, _) => Ok(ExecutionResult::Normal),
-                        WaitStatus::Signaled(_, _, _) => Ok(ExecutionResult::Normal),
-                        _ => Ok(ExecutionResult::Normal),
+                        WaitStatus::Exited(_, status) => Ok(ExecutionResult::Normal(Some(status))),
+                        WaitStatus::Stopped(_, _) => Ok(ExecutionResult::Normal(None)),
+                        WaitStatus::Signaled(_, _, _) => Ok(ExecutionResult::Normal(None)),
+                        _ => Ok(ExecutionResult::Normal(None)),
                     },
                     Err(_) => Err("Process wait error".to_owned()),
                 }
