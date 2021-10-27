@@ -46,7 +46,7 @@ pub fn read() -> String {
                 Key::Char(c) => {
                     clear_command(&mut stdout, &buffer, cursor_pos);
                     let cursor_left = string_slice(&buffer, 0, cursor_pos);
-                    let cursor_right = string_slice(&buffer, cursor_pos, buffer.len());
+                    let cursor_right = string_slice(&buffer, cursor_pos, buffer.chars().count());
                     buffer = format!("{}{}{}", cursor_left, c, cursor_right);
                     write!(stdout, "{}", buffer);
                     cursor_pos += 1;
@@ -65,7 +65,7 @@ pub fn read() -> String {
                     if 0 < cursor_pos {
                         clear_command(&mut stdout, &buffer, cursor_pos);
                         let cursor_left = string_slice(&buffer, 0, cursor_pos - 1);
-                        let cursor_right = string_slice(&buffer, cursor_pos, buffer.len());
+                        let cursor_right = string_slice(&buffer, cursor_pos, buffer.chars().count());
                         buffer = format!("{}{}", cursor_left, cursor_right);
                         write!(stdout, "{}", buffer);
                         cursor_pos -= 1;
@@ -75,10 +75,10 @@ pub fn read() -> String {
                     }
                 }
                 Key::Delete => {
-                    if cursor_pos < buffer.len() {
+                    if cursor_pos < buffer.chars().count() {
                         clear_command(&mut stdout, &buffer, cursor_pos);
                         let cursor_left = string_slice(&buffer, 0, cursor_pos);
-                        let cursor_right = string_slice(&buffer, cursor_pos + 1, buffer.len());
+                        let cursor_right = string_slice(&buffer, cursor_pos + 1, buffer.chars().count());
                         buffer = format!("{}{}", cursor_left, cursor_right);
                         write!(stdout, "{}", buffer);
                         let move_left = UnicodeWidthStr::width(&cursor_right as &str);
@@ -95,7 +95,7 @@ pub fn read() -> String {
                     }
                 }
                 Key::Right => {
-                    if cursor_pos < buffer.len() {
+                    if cursor_pos < buffer.chars().count() {
                         let move_right = UnicodeWidthChar::width(buffer.chars().nth(cursor_pos).unwrap()).unwrap();
                         cursor_pos += 1;
                         write!(stdout, "{}", cursor::Right(move_right as u16));
