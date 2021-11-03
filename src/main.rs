@@ -7,7 +7,7 @@ mod messages;
 use execute::{Executor,ExecutionResult};
 
 fn main() {
-    let executor = Executor::new();
+    let mut executor = Executor::new();
 
     messages::welcome_message();
     loop {
